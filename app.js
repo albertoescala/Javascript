@@ -114,11 +114,10 @@ function getHumanData(target) {
 // Create Dino Compare Method 1
 // NOTE: Weight in JSON file is in lbs, height in inches.
 function compareSpeciesNameLength() {
-  if (this.species === "Pigeon") {
-    return;
-  }
   if (this.species.length < human.name.length) {
     this.fact = `Your name is longer than ${this.species}`;
+  } else {
+    this.fact = `Your name is shorter than ${this.species}`;
   }
 }
 Animal.prototype.compareSpeciesNameLength = compareSpeciesNameLength;
@@ -126,11 +125,12 @@ Animal.prototype.compareSpeciesNameLength = compareSpeciesNameLength;
 // Create Dino Compare Method 2
 // NOTE: Weight in JSON file is in lbs, height in inches.
 function compareHeight() {
-  if (this.species === "Pigeon") {
-    return;
-  }
   if (this.height < human.height) {
     this.fact = `Your are ${human.height - this.height} inches taller than ${
+      this.species
+    }`;
+  } else {
+    this.fact = `Your are ${this.height - human.height} inches shorter than ${
       this.species
     }`;
   }
@@ -140,11 +140,12 @@ Animal.prototype.compareHeight = compareHeight;
 // Create Dino Compare Method 3
 // NOTE: Weight in JSON file is in lbs, height in inches.
 function compareWeight() {
-  if (this.species === "Pigeon") {
-    return;
-  }
   if (this.weight < Number(human.weight)) {
     this.fact = `You are ${Number(human.weight) - this.weight} heavier than ${
+      this.species
+    }`;
+  } else {
+    this.fact = `You are ${this.weight - Number(human.weight)} lighter than ${
       this.species
     }`;
   }
@@ -176,6 +177,29 @@ function generateTiles() {
   });
 }
 
+function randomFact(animal) {
+  const randomNumber = Math.round(Math.random() * 5); // Random number between 0 and 5
+  switch (randomNumber) {
+    case 0:
+      this.fact = `${this.species} lived in ${this.where}`;
+      break;
+    case 1:
+      this.fact = `The ${this.species} was ${this.diet}`;
+      break;
+    case 2:
+      animal.compareWeight();
+      break;
+    case 3:
+      animal.compareSpeciesNameLength();
+      break;
+    case 4:
+      animal.compareHeight();
+      break;
+    default:
+      break;
+  }
+}
+
 // Remove form from screen
 function removeForm() {
   document.querySelector("form").remove();
@@ -192,10 +216,11 @@ function handleSubmit(event) {
   createHumanObject(data);
 
   // Initialize animals comparison
-  animalsArray.forEach(function (dino) {
-    dino.compareSpeciesNameLength();
-    dino.compareHeight();
-    dino.compareWeight();
+  animalsArray.forEach(function (animal) {
+    if (animal.species === "Pigeon") {
+      return;
+    }
+    randomFact.call(animal, animal);
   });
 
   // Add human to the animals array
